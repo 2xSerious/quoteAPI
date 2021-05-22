@@ -1,3 +1,4 @@
+const { response } = require('express');
 const express = require('express');
 const app = express();
 
@@ -16,13 +17,26 @@ app.get('/api/quotes/random', (req, res, next) => {
 
 // Get all quotes 
 app.get('/api/quotes', (req, res, next) => {
-    const queryParms = req.query;
-
-    if (queryParms.person) {
-        const quotesByPerson = quotes.filter(quote => quote.person === queryParms.person);
+    
+    if (req.query.person) {
+        const quotesByPerson = quotes.filter(quote => quote.person === req.query.person);
         res.send({quotes: quotesByPerson});
     } else {
         res.send({quotes: quotes})
+    }
+});
+
+// Post new quotes
+
+app.post('/api/quotes', (req, res, next) => {
+    const newQuote = req.query.quote;
+    const newPerson = req.query.person;
+    if (newQuote && newPerson) {
+        quotes.push({ quote: newQuote, person: newPerson })
+        res.send({ quotes: newQuote, person: newPerson })
+       // res.redirect('/api/quotes');
+    } else { 
+        res.status(400).send()
     }
 });
 
